@@ -1,15 +1,18 @@
 import Head from "next/head";
-import { useState } from "react";
 import { BiUserPlus } from "react-icons/bi";
 import Form from "../components/form";
 import Table from "../components/table";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleChangeAction } from "../redux/reducer";
 
 export default function Home() {
-  const [visible, setVisible] = useState(false);
+  const visible = useSelector((state) => state.crudapp.client.toggleForm);
+  const dispatch = useDispatch();
 
   const onClickAddEmployee = () => {
-    setVisible(!visible);
+    dispatch(toggleChangeAction());
   };
+
   return (
     <section>
       <Head>
@@ -37,8 +40,8 @@ export default function Home() {
         </div>
 
         {/* Collapsable Form */}
-          {visible ? <Form></Form> : <></>}
-    
+        {visible ? <Form></Form> : <></>}
+
         {/* Table */}
         <div className="container mx-auto">
           <Table></Table>
