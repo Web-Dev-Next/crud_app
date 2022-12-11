@@ -49,9 +49,7 @@ function Tr({ _id, name, avatar, email, salary, date, status }) {
 
   const updateHandler = () => {
     dispatch(toggleChangeAction());
-    if (visible) {
-      dispatch(updateFormAction(_id));
-    }
+    if (visible) dispatch(updateFormAction(_id));
   };
 
   return (

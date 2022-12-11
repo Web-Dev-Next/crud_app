@@ -13,7 +13,7 @@ const formReducer = (state, event) => {
 function Form(params) {
   const [formData, setFormData] = useReducer(formReducer, {});
 
-  const formId = useSelector((state) => state.crudapp.client.formId);
+  const formId = useSelector((state) => state.crudapp.client.formId);  
 
   return (
     <div className="container mx-auto py-5">

@@ -1,8 +1,19 @@
-import { useReducer } from "react";
 import { BiBrush } from "react-icons/bi";
 import Success from "./success";
+import { useQuery } from "react-query";
+import { getUser } from "../lib/helper";
 
 function UpdateUserForm({ formId, formData, setFormData }) {
+  const { isLoading, isError, error, data } = useQuery(["users", formId], () =>
+    getUser(formId)
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>{error}</div>;
+
+  const { name, avatar, salary, date, email, status } = data;
+  const [firstname, lastname] = name ? name.split(" ") : formData;
+
   const submitHandler = (e) => {
     e.preventDefault();
     if (Object.keys(formData).length === 0)
@@ -19,6 +30,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
         <input
           type="text"
           onChange={setFormData}
+          defaultValue={firstname}
           name="firstname"
           placeholder="First Name"
           className="border w-full px-5 py-3 focus: outline-none rounded-md"
@@ -28,6 +40,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
         <input
           type="text"
           onChange={setFormData}
+          defaultValue={lastname}
           name="lastname"
           placeholder="Last Name"
           className="border w-full px-5 py-3 focus: outline-none rounded-md"
@@ -37,6 +50,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
         <input
           type="text"
           onChange={setFormData}
+          defaultValue={email}
           name="email"
           placeholder="Email"
           className="border w-full px-5 py-3 focus: outline-none rounded-md"
@@ -46,6 +60,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
         <input
           type="number"
           onChange={setFormData}
+          defaultValue={salary}
           name="salary"
           placeholder="Salary"
           className="border w-full px-5 py-3 focus: outline-none rounded-md"
@@ -55,6 +70,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
         <input
           type="date"
           onChange={setFormData}
+          defaultValue={date}
           name="date"
           className="border px-5 py-3 focus:outline-none rounded-md"
         ></input>
@@ -65,6 +81,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
           <input
             type="radio"
             onChange={setFormData}
+            defaultChecked={status == "Active"}
             name="status"
             value="Active"
             id="radioDefault1"
@@ -79,6 +96,7 @@ function UpdateUserForm({ formId, formData, setFormData }) {
           <input
             type="radio"
             onChange={setFormData}
+            defaultChecked={status !== "Active"}
             name="status"
             value="Inactive"
             id="radioDefault2"
