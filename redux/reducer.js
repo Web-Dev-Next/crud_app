@@ -4,6 +4,7 @@ const initialState = {
   client: {
     toggleForm: false,
     formId: undefined,
+    deleteId: null,
   },
 };
 
@@ -17,9 +18,13 @@ export const ToggleFormReducer = createSlice({
     updateFormAction: (state, action) => {
       state.client.formId = action.payload;
     },
+    deleteAction: (state, action) => {
+      state.client.deleteId = action.payload;
+    },
   },
 });
 
-export const { toggleChangeAction, updateFormAction } = ToggleFormReducer.actions;
+export const { toggleChangeAction, updateFormAction, deleteAction } =
+  ToggleFormReducer.actions;
 
 export default ToggleFormReducer.reducer;

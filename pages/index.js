@@ -3,14 +3,32 @@ import { BiUserPlus } from "react-icons/bi";
 import Form from "../components/form";
 import Table from "../components/table";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleChangeAction } from "../redux/reducer";
+import { deleteAction, toggleChangeAction } from "../redux/reducer";
+import { deleteUser, getUsers } from "../lib/helper";
+import { useQueryClient } from "react-query";
 
 export default function Home() {
   const visible = useSelector((state) => state.crudapp.client.toggleForm);
+  const deleteId = useSelector((state) => state.crudapp.client.deleteId);
+  const queryClient = useQueryClient();
+
   const dispatch = useDispatch();
 
   const onClickAddEmployee = () => {
     dispatch(toggleChangeAction());
+  };
+
+  const deleteHandler = async () => {
+    console.log(deleteId);
+    if (deleteId) {
+      await deleteUser(deleteId);
+      await queryClient.prefetchQuery("users", getUsers);
+      await dispatch(deleteAction(null));
+    }
+  };
+  const cancelHandler = async () => {
+    console.log("cancel");
+    await dispatch(deleteAction(null));
   };
 
   return (
@@ -37,6 +55,7 @@ export default function Home() {
               </span>
             </button>
           </div>
+          {deleteId ? DeleteComponent({ deleteHandler, cancelHandler }) : <></>}
         </div>
 
         {/* Collapsable Form */}
@@ -48,5 +67,25 @@ export default function Home() {
         </div>
       </main>
     </section>
+  );
+}
+
+function DeleteComponent({ deleteHandler, cancelHandler }) {
+  return (
+    <div className="flex gap-5">
+      <button>Are You Sure?</button>
+      <button
+        onClick={deleteHandler}
+        className="flex bg-red-500 text-white px-4 py-2 border rounded-md"
+      >
+        Yes
+      </button>
+      <button
+        onClick={cancelHandler}
+        className="flex bg-green-500 text-white px-4 py-2 border rounded-md"
+      >
+        No
+      </button>
+    </div>
   );
 }

@@ -1,12 +1,21 @@
 import { BiBrush } from "react-icons/bi";
 import Success from "./success";
 import { useQuery } from "react-query";
-import { getUser } from "../lib/helper";
+import { getUser, getUsers, updateUser } from "../lib/helper";
+import { useMutation, useQueryClient } from "react-query";
 
 function UpdateUserForm({ formId, formData, setFormData }) {
+  const queryClient = useQueryClient();
+
   const { isLoading, isError, error, data } = useQuery(["users", formId], () =>
     getUser(formId)
   );
+
+  const UpdateMutation = useMutation((newData) => updateUser(formId, newData), {
+    onSuccess: async (data) => {
+      queryClient.prefetchQuery("users",getUsers);
+    },
+  });
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>{error}</div>;
@@ -14,15 +23,14 @@ function UpdateUserForm({ formId, formData, setFormData }) {
   const { name, avatar, salary, date, email, status } = data;
   const [firstname, lastname] = name ? name.split(" ") : formData;
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    if (Object.keys(formData).length === 0)
-      return console.log("Empty Form Data!");
-    console.log(formData);
+    let userName = `${formData.firstname ?? firstname} ${
+      formData.lastname ?? lastname
+    }`;
+    let updated = Object.assign({}, data, formData, { name: userName });
+    await UpdateMutation.mutate(updated);
   };
-
-  if (Object.keys(formData).length > 0)
-    return <Success message={"Data Added"}></Success>;
 
   return (
     <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={submitHandler}>
